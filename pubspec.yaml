@@ -1,0 +1,43 @@
+name: Pokemon
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  animations: ^2.0.1
+  auto_route: ^2.2.0
+  cupertino_icons: ^1.0.0
+  equatable: ^1.2.5
+  flutter_bloc: ^7.0.1
+  flutter_svg: ^0.22.0
+  google_fonts: ^2.1.0
+  graphql_flutter: ^5.0.0
+  json_annotation: ^4.0.1
+  loadmore: ^2.0.1
+  lottie: ^1.0.1
+  pull_to_refresh: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  auto_route_generator: ^2.1.0
+  build_runner: ^2.0.3
+  chopper_generator: ^4.0.0
+  json_serializable: ^4.1.2
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - lib/assets/
+  fonts:
+    - family: Pokemon
+      fonts:
+        - asset: lib/assets/Pokemon.ttf
