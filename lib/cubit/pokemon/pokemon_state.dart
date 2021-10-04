@@ -1,17 +1,19 @@
 part of 'pokemon_cubit.dart';
 
 @immutable
-abstract class PokemonState {}
+abstract class PokemonState {
+  const PokemonState();
+}
 
-class PokemonInitialState extends PokemonState {}
+class PokemonInitialState extends PokemonState {
+  const PokemonInitialState();
+}
 
 class PokemonLoadInProgressState extends PokemonState {
-  final bool? load;
-
-  PokemonLoadInProgressState({this.load});
+  const PokemonLoadInProgressState();
 
   @override
-  String toString() => 'PokemonLoadSuccess { pokemons : $load }';
+  String toString() => 'PokemonLoadSuccess';
 }
 
 class PokemonLoadSuccessState extends PokemonState {

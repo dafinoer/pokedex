@@ -16,75 +16,47 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
 
-  List pokemons = <Pokemon>[];
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PokemonCubit, PokemonState>(listener: (context, state) {
-      if (state is PokemonLoadInProgressState) {
-        final isLoad = state.load;
-        if (isLoad != null && isLoad) {
+    return BlocConsumer<PokemonCubit, PokemonState>(
+      listener: (context, state) {
+        if (state is PokemonLoadInProgressState) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('Loading more Pokemon')));
-          setState(() {
-            isLoading = false;
-          });
+        } else if (state is PokemonLoadSuccessState && state.pokemons.isEmpty) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('No more Pokemon')));
         }
-      } else if (state is PokemonLoadSuccessState && state.pokemons.isEmpty) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('No more Pokemon')));
-      }
-    }, builder: (context, state) {
-      if (state is PokemonLoadSuccessState) {
-        if (state.isFilter == true) {
-          pokemons = state.pokemons;
-        } else {
-          pokemons.addAll(state.pokemons);
-        }
-        if (pokemons.isEmpty) {
-          return Center(
-            child: Text('Sorry, there\'s no pokemon'),
+      },
+      builder: (context, state) {
+        if (state is PokemonLoadSuccessState) {
+          if (state.pokemons.isEmpty) {
+            return const Center(child: Text('Sorry, there\'s no pokemon'));
+          }
+          return Flex(
+            direction: Axis.horizontal,
+            children: <Widget>[
+              Expanded(
+                child: ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    itemCount: state.pokemons.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, position) {
+                      if(position == state.pokemons.length - 1){
+                        context.read<PokemonCubit>().getPokemon();
+                      }
+                      final pokemon = state.pokemons[position];
+                      return PokemonItem(pokemon: pokemon);
+                    }),
+              ),
+            ],
           );
         }
-      } else {
-        if (pokemons.isEmpty) return SimpleLoading();
-      }
-      return Flex(
-        direction: Axis.horizontal,
-        children: <Widget>[
-          Expanded(
-            child: ListView.separated(
-                controller: _scrollController
-                  ..addListener(() async {
-                    if (_scrollController.position.atEdge &&
-                        _scrollController.position.pixels != 0 &&
-                        !(state is PokemonLoadInProgressState)) {
-                      if (state is PokemonLoadSuccessState && !isLoading) {
-                        final load = state.load;
-                        if (load == null) {
-                          BlocProvider.of<PokemonCubit>(context)
-                              .getAllPokemon();
-                          setState(() {
-                            isLoading = true;
-                          });
-                        }
-                      }
-                    }
-                  }),
-                separatorBuilder: (context, index) {
-                  return SizedBox(height: 15);
-                },
-                padding: EdgeInsets.symmetric(horizontal: 3),
-                itemCount: pokemons.length,
-                shrinkWrap: true,
-                itemBuilder: (context, position) {
-                  final pokemon = pokemons[position];
-                  return PokemonItem(pokemon: pokemon);
-                }),
-          ),
-        ],
-      );
-    });
+        return const SimpleLoading();
+      },
+    );
   }
 }
